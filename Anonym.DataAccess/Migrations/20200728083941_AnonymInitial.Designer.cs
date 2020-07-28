@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Anonym.DataAccess.Migrations
 {
     [DbContext(typeof(AnonymContext))]
-    [Migration("20200727131250_mig_1")]
-    partial class mig_1
+    [Migration("20200728083941_AnonymInitial")]
+    partial class AnonymInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

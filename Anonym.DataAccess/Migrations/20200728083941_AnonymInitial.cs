@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Anonym.DataAccess.Migrations
 {
-    public partial class mig_1 : Migration
+    public partial class AnonymInitial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
