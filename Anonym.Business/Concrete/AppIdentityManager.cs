@@ -1,6 +1,9 @@
 ﻿using Anonym.Business.Abstract;
+using Anonym.Business.Constants.Messages;
 using Anonym.Entities.Concrete;
 using Anonym.Entities.Dtos;
+using Core.Utilities.Results.Abstract;
+using Core.Utilities.Results.Concrete;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -18,7 +21,7 @@ namespace Anonym.Business.Concrete
             _userManager = userManager;
         }
 
-        public async Task<UserForSignUpDto> SignUp(UserForSignUpDto userForSignUpDto)
+        public async Task<IDataResult<UserForSignUpDto>> SignUp(UserForSignUpDto userForSignUpDto)
         {
             AppUser user = new AppUser
             {
@@ -28,7 +31,12 @@ namespace Anonym.Business.Concrete
 
             IdentityResult result = await _userManager.CreateAsync(user, userForSignUpDto.Password);
 
-            return userForSignUpDto;
+            if (result.Succeeded == false)
+            {
+                return new ErrorDataResult<UserForSignUpDto>(userForSignUpDto, IdentityMessages.UserSignUpError);
+            }
+
+            return new SuccessDataResult<UserForSignUpDto>(userForSignUpDto, IdentityMessages.UserSignUpSuccess);
         }
     }
 }
