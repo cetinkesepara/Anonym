@@ -15,24 +15,8 @@ namespace Anonym.WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IUserService _userService;
-
-        public HomeController(IUserService userService)
-        {
-            _userService = userService;
-        }
-
         public IActionResult Index()
         {
-            UserForSignUpDto userForSignUpDto = new UserForSignUpDto
-            {
-                UserName = "test1",
-                Email = "test1@gmail.com",
-                Password = "test"
-            };
-
-            _userService.SignUp(userForSignUpDto);
-
             return View();
         }
     }

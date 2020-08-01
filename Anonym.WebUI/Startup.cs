@@ -53,11 +53,6 @@ namespace Anonym.WebUI
               .AddEntityFrameworkStores<AppIdentityDbContext>()
               .AddDefaultTokenProviders();
 
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<UserManager<AppUser>>();
-            services.AddTransient<AppIdentityDbContext>();
-
             services.AddControllersWithViews();
         }
 

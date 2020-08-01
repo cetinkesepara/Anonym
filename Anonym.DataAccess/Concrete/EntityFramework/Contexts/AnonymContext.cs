@@ -19,5 +19,8 @@ namespace Core.DataAccess.EntityFramework.Contexts
         }
 
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<ChatRoom> ChatRooms { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
     }
 }
