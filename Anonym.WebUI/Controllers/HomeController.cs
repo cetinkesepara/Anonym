@@ -6,32 +6,34 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Anonym.WebUI.Models;
+using Anonym.Business.Abstract;
+using Anonym.Entities.Dtos;
+using Microsoft.AspNetCore.Identity;
+using Anonym.Entities.Concrete;
 
 namespace Anonym.WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IUserService _userService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IUserService userService)
         {
-            _logger = logger;
+            _userService = userService;
         }
 
         public IActionResult Index()
         {
-            return View();
-        }
+            UserForSignUpDto userForSignUpDto = new UserForSignUpDto
+            {
+                UserName = "test1",
+                Email = "test1@gmail.com",
+                Password = "test"
+            };
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+            _userService.SignUp(userForSignUpDto);
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
         }
     }
 }

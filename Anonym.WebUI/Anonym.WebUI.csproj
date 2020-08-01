@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Anonym.Business\Anonym.Business.csproj" />
     <ProjectReference Include="..\Anonym.DataAccess\Anonym.DataAccess.csproj" />
   </ItemGroup>
 

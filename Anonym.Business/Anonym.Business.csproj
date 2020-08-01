@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Anonym.DataAccess\Anonym.DataAccess.csproj" />
     <ProjectReference Include="..\Anonym.Entities\Anonym.Entities.csproj" />
   </ItemGroup>
 
