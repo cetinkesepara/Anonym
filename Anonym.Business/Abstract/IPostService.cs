@@ -8,6 +8,7 @@ namespace Anonym.Business.Abstract
 {
     public interface IPostService
     {
+        IDataResult<List<Post>> GetList();
         IDataResult<Post> GetById(string postId);
         IResult Add(Post post);
         IResult Delete(Post post);

@@ -6,6 +6,7 @@ using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Anonym.Business.Concrete
@@ -34,6 +35,11 @@ namespace Anonym.Business.Concrete
         public IDataResult<Post> GetById(string postId)
         {
             return new SuccessDataResult<Post>(_postDal.Get(p => p.PostId == postId));
+        }
+
+        public IDataResult<List<Post>> GetList()
+        {
+            return new SuccessDataResult<List<Post>>(_postDal.GetList().ToList());
         }
 
         public IResult Update(Post post)
