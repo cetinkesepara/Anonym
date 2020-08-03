@@ -13,5 +13,6 @@ namespace Anonym.Entities.Concrete
         public string Message { get; set; }
         public bool IsPublisherMessage { get; set; }
         public DateTime CreateDate { get; set; }
+        public ChatRoom ChatRoom { get; set; }
     }
 }

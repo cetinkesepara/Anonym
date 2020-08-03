@@ -4,14 +4,16 @@ using Core.DataAccess.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Anonym.DataAccess.Migrations
 {
     [DbContext(typeof(AnonymContext))]
-    partial class AnonymContextModelSnapshot : ModelSnapshot
+    [Migration("20200803070743_Add_Category_ChatMessage_ChatRoom_Tables")]
+    partial class Add_Category_ChatMessage_ChatRoom_Tables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

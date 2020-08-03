@@ -15,5 +15,8 @@ namespace Anonym.Entities.Concrete
         public bool PublisherCommented { get; set; }
         public bool Active { get; set; }
         public DateTime CreateDate { get; set; }
+
+        public Post Post { get; set; }
+        public List<ChatMessage> ChatMessages { get; set; }
     }
 }

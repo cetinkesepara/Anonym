@@ -14,5 +14,8 @@ namespace Anonym.Entities.Concrete
         public string Text { get; set; }
         public DateTime CreatePostDate { get; set; }
         public bool IsActive { get; set; }
+
+        public Category Category { get; set; }
+        public List<ChatRoom> ChatRooms { get; set; }
     }
 }

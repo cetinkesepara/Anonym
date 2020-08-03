@@ -1,4 +1,5 @@
-﻿using Anonym.Entities.Concrete;
+﻿using Anonym.DataAccess.Concrete.EntityFramework.Mappings;
+using Anonym.Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,14 @@ namespace Core.DataAccess.EntityFramework.Contexts
         public AnonymContext(DbContextOptions<AnonymContext> options):base(options)
         {
 
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new PostMap());
+            modelBuilder.ApplyConfiguration(new CategoryMap());
+            modelBuilder.ApplyConfiguration(new ChatMessageMap());
+            modelBuilder.ApplyConfiguration(new ChatRoomMap());
         }
 
         public DbSet<Post> Posts { get; set; }
