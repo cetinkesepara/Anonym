@@ -1,5 +1,5 @@
-﻿using Anonym.DataAccess.Concrete.EntityFramework.Contexts;
-using Anonym.Entities.Concrete;
+﻿using Anonym.Entities.Concrete;
+using Core.DataAccess.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;

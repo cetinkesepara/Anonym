@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Anonym.DataAccess\Anonym.DataAccess.csproj" />
+    <ProjectReference Include="..\Anonym.WebUI\Anonym.WebUI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
