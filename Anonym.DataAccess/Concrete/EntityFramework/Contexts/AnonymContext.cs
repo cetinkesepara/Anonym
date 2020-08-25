@@ -5,16 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.DataAccess.EntityFramework.Contexts
+namespace Anonym.DataAccess.Concrete.EntityFramework.Contexts
 {
-    public class AnonymContext:DbContext
+    public class AnonymContext : DbContext
     {
-        public AnonymContext()
-        {
-
-        }
-
-        public AnonymContext(DbContextOptions<AnonymContext> options):base(options)
+        public AnonymContext(DbContextOptions<AnonymContext> options) : base(options)
         {
 
         }
