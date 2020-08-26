@@ -18,28 +18,16 @@ namespace Anonym.WebAPI.Controllers
     public class UsersController : ControllerBase
     {
         private IMapper _mapper;
-        private readonly UserManager<AppUser> _userManager;
 
-        public UsersController(IMapper mapper, UserManager<AppUser> userManager)
+        public UsersController(IMapper mapper)
         {
             _mapper = mapper;
-            _userManager = userManager;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
         {
-            var user = _mapper.Map<AppUser>(userForRegisterDto);
-            user.UserName = userForRegisterDto.Email;
-
-            IdentityResult result = await _userManager.CreateAsync(user, userForRegisterDto.Password);
-
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(new SuccessResult(CrudMessages.UserAdded));
+            return Ok();
         }
     }
 }

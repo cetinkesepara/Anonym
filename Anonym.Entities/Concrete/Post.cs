@@ -16,6 +16,7 @@ namespace Anonym.Entities.Concrete
         public bool IsActive { get; set; }
 
         public Category Category { get; set; }
+        public User User { get; set; }
         public List<ChatRoom> ChatRooms { get; set; }
     }
 }

@@ -12,7 +12,6 @@ namespace Anonym.Business.Mappings.AutoMapper
         public BusinessProfile()
         {
             CreateMap<CategoryForAddDto, Category>();
-            CreateMap<UserForRegisterDto, AppUser>();
         }
     }
 }
