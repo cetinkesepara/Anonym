@@ -26,26 +26,7 @@ namespace Anonym.WebAPI
         {
             services.AddDbContext<AnonymContext>(x => x.UseSqlServer(Configuration.GetConnectionString("SQLProvider"), y => y.MigrationsAssembly("Anonym.DataAccess")));
 
-            services.AddDbContext<AppIdentityDbContext>(x => x.UseSqlServer(Configuration.GetConnectionString("SQLProvider"), y => y.MigrationsAssembly("Anonym.DataAccess")));
-
             services.AddAutoMapper(typeof(BusinessProfile));
-
-            services.AddIdentity<AppUser, AppRole>(options =>
-            {
-                //options.Lockout = lockoutOptions;
-
-                options.User.RequireUniqueEmail = true;
-                options.User.AllowedUserNameCharacters = "abcçdefgðhýijklmnoöpqrsþtuüvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-
-                options.Password.RequiredLength = 4;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireDigit = false;
-
-            })
-              .AddEntityFrameworkStores<AppIdentityDbContext>()
-              .AddDefaultTokenProviders();
 
             services.AddControllers();
         }

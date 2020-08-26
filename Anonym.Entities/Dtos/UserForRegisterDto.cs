@@ -5,9 +5,12 @@ using System.Text;
 
 namespace Anonym.Entities.Dtos
 {
-    public class UserForSignUpDto:IDto
+    public class UserForRegisterDto:IDto
     {
-        public string UserName { get; set; }
+        public string Name { get; set; }
+        public string City { get; set; }
+        public DateTime? BirthDay { get; set; }
+        public string Gender { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
     }
