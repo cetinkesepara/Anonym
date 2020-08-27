@@ -21,6 +21,7 @@ namespace Anonym.Entities.Concrete
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
         public string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
+        public string Name { get; set; }
         public string City { get; set; }
         public DateTime? BirthDay { get; set; }
         public string Gender { get; set; }

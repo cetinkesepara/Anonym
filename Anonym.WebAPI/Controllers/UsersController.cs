@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Anonym.Business.Abstract;
 using Anonym.Business.Constants.Messages;
 using Anonym.Entities.Concrete;
 using Anonym.Entities.Dtos;
 using AutoMapper;
+using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -18,16 +21,37 @@ namespace Anonym.WebAPI.Controllers
     public class UsersController : ControllerBase
     {
         private IMapper _mapper;
+        private IUserService _userService;
 
-        public UsersController(IMapper mapper)
+        public UsersController(IMapper mapper, IUserService userService)
         {
             _mapper = mapper;
+            _userService = userService;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
+        public IActionResult Register([FromBody] UserForRegisterDto userForRegisterDto)
         {
-            return Ok();
+            User user = _mapper.Map<User>(userForRegisterDto);
+            user.UserName = userForRegisterDto.Email;
+            user.NormalizedEmail = userForRegisterDto.Email.ToUpper(new CultureInfo("en-Us"));
+            user.NormalizedUserName = userForRegisterDto.Email.ToUpper(new CultureInfo("en-Us"));
+
+            IResult userExistsResult = _userService.UserExists(userForRegisterDto.Email);
+
+            if (!userExistsResult.Success)
+            {
+                return BadRequest(userExistsResult.Message);
+            }
+
+            IResult registerResult = _userService.Register(user, userForRegisterDto.Password);
+
+            if (!registerResult.Success)
+            {
+                return BadRequest();
+            }
+
+            return Ok(registerResult.Message);
         }
     }
 }

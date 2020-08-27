@@ -25,6 +25,18 @@ namespace Anonym.Business.DependencyResolvers.Autofac
             builder.RegisterType<ChatMessageManager>().As<IChatMessageService>().SingleInstance();
             builder.RegisterType<EfChatMessageDal>().As<IChatMessageDal>().SingleInstance();
 
+            builder.RegisterType<UserManager>().As<IUserService>().SingleInstance();
+            builder.RegisterType<EfUserDal>().As<IUserDal>().SingleInstance();
+
+            builder.RegisterType<EfUserClaimDal>().As<IUserClaimDal>().SingleInstance();
+
+            builder.RegisterType<EfUserLoginDal>().As<IUserLoginDal>().SingleInstance();
+
+            builder.RegisterType<EfRoleDal>().As<IRoleDal>().SingleInstance();
+
+            builder.RegisterType<EfRoleClaimDal>().As<IRoleClaimDal>().SingleInstance();
+
+            builder.RegisterType<EfUserRoleDal>().As<IUserRoleDal>().SingleInstance();
         }
     }
 }
