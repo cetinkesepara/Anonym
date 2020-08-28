@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anonym.Business", "Anonym.B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anonym.Business.Tests", "Anonym.Business.Tests\Anonym.Business.Tests.csproj", "{73CEBB9A-C642-42AF-9BF7-B0DB752A3D1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anonym.WebAPI", "Anonym.WebAPI\Anonym.WebAPI.csproj", "{F71E753B-2167-48CC-AE9E-D5A35D1A1783}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anonym.WebAPI", "Anonym.WebAPI\Anonym.WebAPI.csproj", "{F71E753B-2167-48CC-AE9E-D5A35D1A1783}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
