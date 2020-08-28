@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Anonym.Business.Abstract;
 using Anonym.Business.Constants.Messages;
+using Anonym.Business.Utilities.Security.Jwt.Concrete;
 using Anonym.Entities.Concrete;
 using Anonym.Entities.Dtos;
 using AutoMapper;
@@ -27,6 +28,24 @@ namespace Anonym.WebAPI.Controllers
         {
             _mapper = mapper;
             _userService = userService;
+        }
+
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] UserForLoginDto userForLoginDto)
+        {
+            IDataResult<User> loginResult = _userService.Login(userForLoginDto);
+            if (!loginResult.Success)
+            {
+                return BadRequest(loginResult.Message);
+            }
+
+            IDataResult<AccessToken> createTokenResult = _userService.CreateAccessToken(loginResult.Data);
+            if (!createTokenResult.Success)
+            {
+                return BadRequest();
+            }
+
+            return Ok(createTokenResult.Data);
         }
 
         [HttpPost("register")]

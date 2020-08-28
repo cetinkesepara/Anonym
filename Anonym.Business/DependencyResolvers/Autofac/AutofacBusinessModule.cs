@@ -1,5 +1,7 @@
 ﻿using Anonym.Business.Abstract;
 using Anonym.Business.Concrete;
+using Anonym.Business.Utilities.Security.Jwt.Abstract;
+using Anonym.Business.Utilities.Security.Jwt.Concrete;
 using Anonym.DataAccess.Abstract;
 using Anonym.DataAccess.Concrete.EntityFramework;
 using Autofac;
@@ -37,6 +39,8 @@ namespace Anonym.Business.DependencyResolvers.Autofac
             builder.RegisterType<EfRoleClaimDal>().As<IRoleClaimDal>().SingleInstance();
 
             builder.RegisterType<EfUserRoleDal>().As<IUserRoleDal>().SingleInstance();
+
+            builder.RegisterType<JwtHelper>().As<ITokenHelper>();
         }
     }
 }

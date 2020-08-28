@@ -1,7 +1,10 @@
 ﻿using Anonym.Business.Abstract;
 using Anonym.Business.Constants.Messages;
+using Anonym.Business.Utilities.Security.Jwt.Abstract;
+using Anonym.Business.Utilities.Security.Jwt.Concrete;
 using Anonym.DataAccess.Abstract;
 using Anonym.Entities.Concrete;
+using Anonym.Entities.Dtos;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using Core.Utilities.Security.Hashing;
@@ -15,10 +18,38 @@ namespace Anonym.Business.Concrete
     public class UserManager : IUserService
     {
         private readonly IUserDal _userDal;
+        private readonly ITokenHelper _tokenHelper;
 
-        public UserManager(IUserDal userDal)
+        public UserManager(IUserDal userDal, ITokenHelper tokenHelper)
         {
             _userDal = userDal;
+            _tokenHelper = tokenHelper;
+        }
+
+        public IDataResult<User> Login(UserForLoginDto userForLoginDto)
+        {
+            User user = GetByEmail(userForLoginDto.Email);
+
+            if (user == null)
+            {
+                return new ErrorDataResult<User>(SecurityMessages.LoginCheckError);
+            }
+
+            if(!HashingHelper.VerifyPasswordHash(userForLoginDto.Password, user.PasswordHash, user.PasswordSalt))
+            {
+                return new ErrorDataResult<User>(SecurityMessages.LoginCheckError);
+            }
+
+            return new SuccessDataResult<User>(user, SecurityMessages.LoginSuccessful);
+        }
+
+        public IDataResult<AccessToken> CreateAccessToken(User user)
+        {
+            var roleClaims = _userDal.GetRoleClaims(user);
+            var userClaims = _userDal.GetUserClaims(user);
+            var accessToken = _tokenHelper.CreateToken(user, roleClaims, userClaims);
+
+            return new SuccessDataResult<AccessToken>(accessToken);
         }
 
         public IResult Register(User user, string password)
