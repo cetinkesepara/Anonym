@@ -36,7 +36,7 @@ namespace Anonym.WebAPI.Controllers
             IDataResult<User> loginResult = _userService.Login(userForLoginDto);
             if (!loginResult.Success)
             {
-                return BadRequest(loginResult.Message);
+                return Unauthorized(loginResult.Message);
             }
 
             IDataResult<AccessToken> createTokenResult = _userService.CreateAccessToken(loginResult.Data);
