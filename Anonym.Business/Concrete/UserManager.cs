@@ -40,7 +40,7 @@ namespace Anonym.Business.Concrete
                 return new ErrorDataResult<User>(SecurityMessages.LoginCheckError);
             }
 
-            return new SuccessDataResult<User>(user, SecurityMessages.LoginSuccessful);
+            return new SuccessDataResult<User>(user);
         }
 
         public IDataResult<AccessToken> CreateAccessToken(User user)
@@ -49,7 +49,7 @@ namespace Anonym.Business.Concrete
             var userClaims = _userDal.GetUserClaims(user);
             var accessToken = _tokenHelper.CreateToken(user, roleClaims, userClaims);
 
-            return new SuccessDataResult<AccessToken>(accessToken);
+            return new SuccessDataResult<AccessToken>(accessToken, SecurityMessages.LoginSuccessful);
         }
 
         public IResult Register(User user, string password)

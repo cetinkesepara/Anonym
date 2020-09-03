@@ -45,7 +45,7 @@ namespace Anonym.WebAPI.Controllers
                 return BadRequest();
             }
 
-            return Ok(createTokenResult.Data);
+            return Ok(createTokenResult);
         }
 
         [HttpPost("register")]

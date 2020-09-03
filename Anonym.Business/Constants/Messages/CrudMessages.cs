@@ -14,7 +14,7 @@ namespace Anonym.Business.Constants.Messages
         public static string CategoryDeleted = "Kategori başarıyla silindi.";
         public static string CategoryUpdated = "Kategori başarıyla güncellendi.";
 
-        public static string UserAdded = "Üye kaydı oluşturuldu";
+        public static string UserAdded = "Üye kaydı oluşturuldu. Şimdi email adresinizi ve şifrenizi kullanarak giriş yapabilirsiniz.";
         public static string UserExistsForEmail = "Bu email adresi ile daha önce zaten kaydolunmuş.";
     }
 }
