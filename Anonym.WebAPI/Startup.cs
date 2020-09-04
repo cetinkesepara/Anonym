@@ -36,7 +36,7 @@ namespace Anonym.WebAPI
 
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowOrigin", builder => builder.WithOrigins("http://localhost:4200"));
+                options.AddPolicy("AllowOrigin", builder => builder.WithOrigins(Configuration.GetSection("Origins:Anonym.WebUI.SPA").Value));
             });
 
             //services.AddCors();
@@ -66,7 +66,7 @@ namespace Anonym.WebAPI
             }
 
             //app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed((host) => true).AllowCredentials());
-            app.UseCors(builder => builder.WithOrigins("http://localhost:4200").AllowAnyHeader());
+            app.UseCors(builder => builder.WithOrigins(Configuration.GetSection("Origins:Anonym.WebUI.SPA").Value).AllowAnyHeader());
 
             app.UseHttpsRedirection();
 

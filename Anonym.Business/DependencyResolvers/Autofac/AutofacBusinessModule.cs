@@ -40,6 +40,12 @@ namespace Anonym.Business.DependencyResolvers.Autofac
 
             builder.RegisterType<EfUserRoleDal>().As<IUserRoleDal>().SingleInstance();
 
+            builder.RegisterType<SettingManager>().As<ISettingService>().SingleInstance();
+            builder.RegisterType<EfSettingDal>().As<ISettingDal>().SingleInstance();
+
+            builder.RegisterType<UserTokenManager>().As<IUserTokenSevice>().SingleInstance();
+            builder.RegisterType<EfUserTokenDal>().As<IUserTokenDal>().SingleInstance();
+
             builder.RegisterType<JwtHelper>().As<ITokenHelper>();
         }
     }

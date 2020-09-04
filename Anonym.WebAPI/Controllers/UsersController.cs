@@ -72,5 +72,48 @@ namespace Anonym.WebAPI.Controllers
 
             return Ok(registerResult.Message);
         }
+
+        [HttpPost("confrimEmail")]
+        public IActionResult ConfirmationEmail([FromBody] EmailDto emailDto)
+        {
+            User user = _userService.GetByEmail(emailDto.Email);
+
+            if (user == null)
+            {
+                return BadRequest(CrudMessages.UserNotFoundForEmail);
+            }
+
+            if (user.EmailConfirmed)
+            {
+                return BadRequest(SecurityMessages.UserEmailAlreadyConfirmed);
+            }
+
+            IResult result = _userService.ConfirmationEmail(user);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result.Message);
+        }
+
+        [HttpPost("activatedEmail")]
+        public IActionResult ActivateEmail([FromBody] ActivateEmailDto activateEmailDto)
+        {
+            IDataResult<User> userResult = _userService.GetById(activateEmailDto.UserId);
+            if (!userResult.Success)
+            {
+                return BadRequest();
+            }
+
+            IResult result = _userService.ActivateEmail(userResult.Data, activateEmailDto.Token);
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result.Message);
+        }
     }
 }

@@ -26,6 +26,8 @@ namespace Anonym.DataAccess.Concrete.EntityFramework.Contexts
             modelBuilder.ApplyConfiguration(new UserMap());
             modelBuilder.ApplyConfiguration(new UserLoginMap());
             modelBuilder.ApplyConfiguration(new UserRoleMap());
+            modelBuilder.ApplyConfiguration(new SettingMap());
+            modelBuilder.ApplyConfiguration(new UserTokenMap());
         }
 
         public DbSet<Post> Posts { get; set; }
@@ -37,6 +39,8 @@ namespace Anonym.DataAccess.Concrete.EntityFramework.Contexts
         public DbSet<User> Users { get; set; }
         public DbSet<UserClaim> UserClaims { get; set; }
         public DbSet<UserLogin> UserLogins { get; set; }
-        public DbSet<UserRole> UserRoles { get; set; } 
+        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<Setting> Settings { get; set; }
+        public DbSet<UserToken> UserTokens { get; set; }
     }
 }

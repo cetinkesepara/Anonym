@@ -30,5 +30,6 @@ namespace Anonym.Entities.Concrete
         public List<UserLogin> UserLogins { get; set; }
         public List<UserClaim> UserClaims { get; set; }
         public List<Post> Posts { get; set; }
+        public List<UserToken> UserTokens { get; set; }
     }
 }

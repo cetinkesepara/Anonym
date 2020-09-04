@@ -4,14 +4,16 @@ using Anonym.DataAccess.Concrete.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Anonym.DataAccess.Migrations
 {
     [DbContext(typeof(AnonymContext))]
-    partial class AnonymContextModelSnapshot : ModelSnapshot
+    [Migration("20200903104840_AddSettingTable")]
+    partial class AddSettingTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -357,33 +359,6 @@ namespace Anonym.DataAccess.Migrations
                     b.ToTable("UserRoles","dbo");
                 });
 
-            modelBuilder.Entity("Anonym.Entities.Concrete.UserToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("Expiration")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserTokens","dbo");
-                });
-
             modelBuilder.Entity("Anonym.Entities.Concrete.ChatMessage", b =>
                 {
                     b.HasOne("Anonym.Entities.Concrete.ChatRoom", "ChatRoom")
@@ -454,15 +429,6 @@ namespace Anonym.DataAccess.Migrations
 
                     b.HasOne("Anonym.Entities.Concrete.User", "User")
                         .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Anonym.Entities.Concrete.UserToken", b =>
-                {
-                    b.HasOne("Anonym.Entities.Concrete.User", "User")
-                        .WithMany("UserTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

@@ -72,5 +72,7 @@ namespace Anonym.Business.Utilities.Security.Jwt.Concrete
 
             return claims;
         }
+
+
     }
 }

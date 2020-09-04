@@ -4,14 +4,16 @@ using Anonym.DataAccess.Concrete.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Anonym.DataAccess.Migrations
 {
     [DbContext(typeof(AnonymContext))]
-    partial class AnonymContextModelSnapshot : ModelSnapshot
+    [Migration("20200904092116_AddUserTokenTable")]
+    partial class AddUserTokenTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

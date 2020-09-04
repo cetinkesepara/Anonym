@@ -29,6 +29,7 @@ namespace Anonym.DataAccess.Concrete.EntityFramework.Mappings
             builder.HasMany(u => u.UserLogins).WithOne(ul => ul.User).HasForeignKey(ul => ul.UserId).IsRequired().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(u => u.UserRoles).WithOne(ur => ur.User).HasForeignKey(ur => ur.UserId).IsRequired().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(u => u.Posts).WithOne(p => p.User).HasForeignKey(p => p.UserId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(u => u.UserTokens).WithOne(ut => ut.User).HasForeignKey(ut => ut.UserId).IsRequired().OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
