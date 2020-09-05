@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Anonym.Business.Abstract;
+using Anonym.Business.Constants.Errors;
 using Anonym.Business.Constants.Messages;
 using Anonym.Business.Utilities.Security.Jwt.Concrete;
 using Anonym.Entities.Concrete;
@@ -36,19 +37,31 @@ namespace Anonym.WebAPI.Controllers
             IDataResult<User> loginResult = _userService.Login(userForLoginDto);
             if (!loginResult.Success)
             {
-                return Unauthorized(loginResult.Message);
+                return Unauthorized(new ErrorResultDto { 
+                    Name = ErrorNames.UnauthorizedUser, 
+                    Type = ErrorTypes.Warning,
+                    Value = loginResult.Message
+                });
             }
 
             IResult confirmEmailResult = _userService.IsConfirmEmail(userForLoginDto.Email);
             if (!confirmEmailResult.Success)
             {
-                return BadRequest(confirmEmailResult.Message);
+                return BadRequest(new ErrorResultDto { 
+                    Name = ErrorNames.UnverifiedEmail,
+                    Type = ErrorTypes.Warning,
+                    Value = confirmEmailResult.Message
+                });
             }
 
             IDataResult<AccessToken> createTokenResult = _userService.CreateAccessToken(loginResult.Data);
             if (!createTokenResult.Success)
             {
-                return StatusCode(500);
+                return BadRequest(new ErrorResultDto { 
+                    Name = ErrorNames.DefaultError,
+                    Type = ErrorTypes.Danger,
+                    Value = SecurityMessages.SystemError
+                });
             }
 
             return Ok(createTokenResult);
@@ -66,14 +79,24 @@ namespace Anonym.WebAPI.Controllers
 
             if (!userExistsResult.Success)
             {
-                return BadRequest(userExistsResult.Message);
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.AlreadyRegisteredUser,
+                    Type = ErrorTypes.Warning,
+                    Value = userExistsResult.Message
+                });
             }
 
             IResult registerResult = _userService.Register(user, userForRegisterDto.Password);
 
             if (!registerResult.Success)
             {
-                return BadRequest();
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.DefaultError,
+                    Type = ErrorTypes.Danger,
+                    Value = SecurityMessages.SystemError
+                });
             }
 
             return Ok(registerResult.Message);
@@ -86,19 +109,34 @@ namespace Anonym.WebAPI.Controllers
 
             if (user == null)
             {
-                return BadRequest(CrudMessages.UserNotFoundForEmail);
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.NotFoundUser,
+                    Type = ErrorTypes.Warning,
+                    Value = CrudMessages.UserNotFoundForEmail
+                });
             }
 
             if (user.EmailConfirmed)
             {
-                return BadRequest(SecurityMessages.UserEmailAlreadyConfirmed);
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.AlreadyConfirmatedEmail,
+                    Type = ErrorTypes.Danger,
+                    Value = SecurityMessages.UserEmailAlreadyConfirmed
+                });
             }
 
             IResult result = _userService.ConfirmationEmail(user);
 
             if (!result.Success)
             {
-                return BadRequest(result.Message);
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.ConfirmationErrorEmail,
+                    Type = ErrorTypes.Danger,
+                    Value = result.Message
+                });
             }
 
             return Ok(result.Message);
@@ -110,13 +148,23 @@ namespace Anonym.WebAPI.Controllers
             IDataResult<User> userResult = _userService.GetById(activateEmailDto.UserId);
             if (!userResult.Success || userResult.Data == null)
             {
-                return BadRequest(SecurityMessages.SystemError);
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.DefaultError,
+                    Type = ErrorTypes.Danger,
+                    Value = SecurityMessages.SystemError
+                });
             }
 
             IResult result = _userService.ActivateEmail(userResult.Data, activateEmailDto.Token);
             if (!result.Success)
             {
-                return BadRequest(result.Message);
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.ActivatedErrorEmail,
+                    Type = ErrorTypes.Danger,
+                    Value = SecurityMessages.SystemError
+                });
             }
 
             return Ok(result.Message);

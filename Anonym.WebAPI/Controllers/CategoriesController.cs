@@ -1,4 +1,6 @@
 ﻿using Anonym.Business.Abstract;
+using Anonym.Business.Constants.Errors;
+using Anonym.Business.Constants.Messages;
 using Anonym.Entities.Concrete;
 using Anonym.Entities.Dtos;
 using AutoMapper;
@@ -32,7 +34,11 @@ namespace Anonym.WebAPI.Controllers
 
             if (!result.Success)
             {
-                return BadRequest();
+                return BadRequest(new ErrorResultDto { 
+                    Name = ErrorNames.DefaultError,
+                    Type = ErrorTypes.Danger,
+                    Value = SecurityMessages.SystemError
+                });
             }
 
             return Ok(result.Message);
