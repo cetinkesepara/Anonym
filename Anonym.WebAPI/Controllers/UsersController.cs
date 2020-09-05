@@ -39,10 +39,16 @@ namespace Anonym.WebAPI.Controllers
                 return Unauthorized(loginResult.Message);
             }
 
+            IResult confirmEmailResult = _userService.IsConfirmEmail(userForLoginDto.Email);
+            if (!confirmEmailResult.Success)
+            {
+                return BadRequest(confirmEmailResult.Message);
+            }
+
             IDataResult<AccessToken> createTokenResult = _userService.CreateAccessToken(loginResult.Data);
             if (!createTokenResult.Success)
             {
-                return BadRequest();
+                return StatusCode(500);
             }
 
             return Ok(createTokenResult);
@@ -102,9 +108,9 @@ namespace Anonym.WebAPI.Controllers
         public IActionResult ActivateEmail([FromBody] ActivateEmailDto activateEmailDto)
         {
             IDataResult<User> userResult = _userService.GetById(activateEmailDto.UserId);
-            if (!userResult.Success)
+            if (!userResult.Success || userResult.Data == null)
             {
-                return BadRequest();
+                return BadRequest(SecurityMessages.SystemError);
             }
 
             IResult result = _userService.ActivateEmail(userResult.Data, activateEmailDto.Token);

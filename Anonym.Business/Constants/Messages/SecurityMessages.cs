@@ -8,6 +8,7 @@ namespace Anonym.Business.Constants.Messages
     {
         public static string LoginCheckError = "Email adresiniz veya şifreniz yanlış!";
         public static string LoginSuccessful = "Giriş yapıldı";
+        public static string LoginNotConfirmEmail = "Üyeliğiniz etkinleştirilmemiş. Lütfen e-posta adresinize gönderilmiş olan bağlantıya tıklayarak e-potanızı etkinleştiriniz.";
         public static string ConfirmEmailSuccessful = "Üyeliğinizi etkinleştirmek için e-posta adresinize bir bağlantı gönderildi. Lütfen e-posta adresinizi kontrol ediniz.";
         public static string UserEmailAlreadyConfirmed = "Bu e-posta adresi zaten etkinleştirilmiş.";
         public static string UserEmailActivated = "Üyeliğiniz etkinleştirildi. Şimdi giriş ekrarnından oturum açabilirsiniz.";

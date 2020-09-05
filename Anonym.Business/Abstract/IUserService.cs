@@ -17,6 +17,7 @@ namespace Anonym.Business.Abstract
         IResult UserExists(string email);
         IResult ConfirmationEmail(User user);
         IResult ActivateEmail(User user, string token);
+        IResult IsConfirmEmail(string email);
         User GetByUsername(string username);
         User GetByEmail(string email);
     }

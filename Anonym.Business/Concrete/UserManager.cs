@@ -49,12 +49,12 @@ namespace Anonym.Business.Concrete
 
             if (user == null)
             {
-                return new ErrorDataResult<User>(SecurityMessages.LoginCheckError);
+                return new ErrorDataResult<User>(user, SecurityMessages.LoginCheckError);
             }
 
             if(!HashingHelper.VerifyPasswordHash(userForLoginDto.Password, user.PasswordHash, user.PasswordSalt))
             {
-                return new ErrorDataResult<User>(SecurityMessages.LoginCheckError);
+                return new ErrorDataResult<User>(user, SecurityMessages.LoginCheckError);
             }
 
             return new SuccessDataResult<User>(user);
@@ -163,7 +163,7 @@ namespace Anonym.Business.Concrete
         private IResult SendConfirmationEmail(User user, IDataResult<OptionForSendEmailDto> emailSettingResult, IDataResult<AccessToken> tokenResult)
         {
             string originLink = _configuration.GetSection("Origins:Anonym.WebUI.SPA").Value;
-            string confirmLink = originLink + "/activateEmail?userId=" + user.Id + "&token=" + tokenResult.Data.Token;
+            string confirmLink = originLink + "/activateEmail/" + user.Id + "/" + tokenResult.Data.Token;
 
             EmailSendDto confirmationDto = _mapper.Map<EmailSendDto>(emailSettingResult.Data);
             confirmationDto.RecipientEmail = user.Email;
@@ -190,14 +190,14 @@ namespace Anonym.Business.Concrete
                 return new ErrorResult(SecurityMessages.SystemError);
             }
 
-            if(userTokenResult.Data.Expiration < DateTime.Now)
-            {
-                return new ErrorResult(SecurityMessages.TokenHasExpiredForEmailConfirm);
-            }
-
-            if(userTokenResult.Data.Value != token)
+            if (userTokenResult.Data.Value != token)
             {
                 return new ErrorResult(SecurityMessages.InvalidTransaction);
+            }
+
+            if (userTokenResult.Data.Expiration < DateTime.Now)
+            {
+                return new ErrorResult(SecurityMessages.TokenHasExpiredForEmailConfirm);
             }
 
             user.EmailConfirmed = true;
@@ -211,6 +211,16 @@ namespace Anonym.Business.Concrete
             }
             
             return new SuccessResult(SecurityMessages.UserEmailActivated);
+        }
+
+        public IResult IsConfirmEmail(string email)
+        {
+            User user = GetByEmail(email);
+            if (!user.EmailConfirmed)
+            {
+                return new ErrorResult(SecurityMessages.LoginNotConfirmEmail);
+            }
+            return new SuccessResult();
         }
     }
 }
