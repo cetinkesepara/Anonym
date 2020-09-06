@@ -163,7 +163,63 @@ namespace Anonym.WebAPI.Controllers
                 {
                     Name = ErrorNames.ActivatedErrorEmail,
                     Type = ErrorTypes.Danger,
+                    Value = result.Message
+                });
+            }
+
+            return Ok(result.Message);
+        }
+
+        [HttpPost("forgettingPassword")]
+        public IActionResult ForgettingPassword([FromBody] EmailDto emailDto)
+        {
+            User user = _userService.GetByEmail(emailDto.Email);
+            if (user == null)
+            {
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.NotFoundUser,
+                    Type = ErrorTypes.Warning,
+                    Value = CrudMessages.UserNotFoundForEmail
+                });
+            }
+
+            IResult result = _userService.ForgettingPassword(user);
+            if (!result.Success)
+            {
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.ForgettingPasswordError,
+                    Type = ErrorTypes.Danger,
+                    Value = result.Message
+                });
+            }
+
+            return Ok(result.Message);
+        }
+
+        [HttpPost("resetPasswordForForgetten")]
+        public IActionResult ResetPasswordForForgetten([FromBody] ForgettingPasswordDto forgettingPasswordDto)
+        {
+            IDataResult<User> userResult = _userService.GetById(forgettingPasswordDto.UserId);
+            if (!userResult.Success || userResult.Data == null)
+            {
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.DefaultError,
+                    Type = ErrorTypes.Danger,
                     Value = SecurityMessages.SystemError
+                });
+            }
+
+            IResult result = _userService.ResetPasswordForForgetten(userResult.Data, forgettingPasswordDto.Token, forgettingPasswordDto.Password);
+            if (!result.Success)
+            {
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.ResetPasswordError,
+                    Type = ErrorTypes.Danger,
+                    Value = result.Message
                 });
             }
 

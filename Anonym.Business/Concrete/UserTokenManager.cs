@@ -36,5 +36,11 @@ namespace Anonym.Business.Concrete
             var userToken = _userTokenDal.Get(ut => ut.Name == TokenConstants.EmailConfirmation && ut.UserId == userId);
             return new SuccessDataResult<UserToken>(userToken);
         }
+
+        public IDataResult<UserToken> GetPasswordResetTokenByUserId(string userId)
+        {
+            var userToken = _userTokenDal.Get(ut => ut.Name == TokenConstants.PasswordReset && ut.UserId == userId);
+            return new SuccessDataResult<UserToken>(userToken);
+        }
     }
 }

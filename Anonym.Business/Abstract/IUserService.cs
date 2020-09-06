@@ -18,6 +18,8 @@ namespace Anonym.Business.Abstract
         IResult ConfirmationEmail(User user);
         IResult ActivateEmail(User user, string token);
         IResult IsConfirmEmail(string email);
+        IResult ForgettingPassword(User user);
+        IResult ResetPasswordForForgetten(User user, string token, string password);
         User GetByUsername(string username);
         User GetByEmail(string email);
     }

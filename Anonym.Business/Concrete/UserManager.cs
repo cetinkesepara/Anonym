@@ -33,7 +33,12 @@ namespace Anonym.Business.Concrete
         private readonly IMapper _mapper;
         private readonly IUserTokenSevice _userTokenSevice;
 
-        public UserManager(IUserDal userDal, ITokenHelper tokenHelper, IConfiguration configuration, ISettingService settingService, IMapper mapper, IUserTokenSevice userTokenSevice)
+        public UserManager(IUserDal userDal, 
+            ITokenHelper tokenHelper, 
+            IConfiguration configuration, 
+            ISettingService settingService, 
+            IMapper mapper, 
+            IUserTokenSevice userTokenSevice)
         {
             _userDal = userDal;
             _tokenHelper = tokenHelper;
@@ -221,6 +226,109 @@ namespace Anonym.Business.Concrete
                 return new ErrorResult(SecurityMessages.LoginNotConfirmEmail);
             }
             return new SuccessResult();
+        }
+
+        public IResult ForgettingPassword(User user)
+        {
+            IDataResult<UserToken> userTokenResult = _userTokenSevice.GetPasswordResetTokenByUserId(user.Id);
+            if (userTokenResult.Success && userTokenResult.Data != null)
+            {
+                if (userTokenResult.Data.Expiration > DateTime.Now)
+                {
+                    return new ErrorResult(SecurityMessages.TokenNotExpired);
+                }
+
+                IResult deleteOldTokenResult = _userTokenSevice.Delete(userTokenResult.Data);
+                if (!deleteOldTokenResult.Success)
+                {
+                    return new ErrorResult(SecurityMessages.SystemError);
+                }
+            }
+
+            IDataResult<OptionForSendEmailDto> emailSettingResult = _settingService.GetEmailSettings();
+            if (!emailSettingResult.Success || emailSettingResult.Data == null)
+            {
+                return new ErrorResult(SecurityMessages.SystemError);
+            }
+
+            IDataResult<AccessToken> tokenResult = CreateAccessToken(user);
+            if (!tokenResult.Success || tokenResult.Data == null)
+            {
+                return new ErrorResult(SecurityMessages.SystemError);
+            }
+
+            UserToken userToken = new UserToken
+            {
+                Name = TokenConstants.PasswordReset,
+                Value = tokenResult.Data.Token,
+                Expiration = tokenResult.Data.Expiration,
+                UserId = user.Id
+            };
+            IResult addTokenResult = _userTokenSevice.Add(userToken);
+            if (!addTokenResult.Success)
+            {
+                return new ErrorResult(SecurityMessages.SystemError);
+            }
+
+            IResult sendEmailResult = SendForgettingPasswordEmail(user, emailSettingResult, tokenResult);
+            if (!sendEmailResult.Success)
+            {
+                return new ErrorResult(SecurityMessages.SystemError);
+            }
+
+            return new SuccessResult(SecurityMessages.ForgettingPasswordEmailSuccessful);
+        }
+
+        private IResult SendForgettingPasswordEmail(User user, IDataResult<OptionForSendEmailDto> emailSettingResult, IDataResult<AccessToken> tokenResult)
+        {
+            string originLink = _configuration.GetSection("Origins:Anonym.WebUI.SPA").Value;
+            string confirmLink = originLink + "/resetPassword/" + user.Id + "/" + tokenResult.Data.Token;
+
+            EmailSendDto confirmationDto = _mapper.Map<EmailSendDto>(emailSettingResult.Data);
+            confirmationDto.RecipientEmail = user.Email;
+            confirmationDto.MailSubject = "Şifre Sıfırlama";
+            confirmationDto.MailBody = "<h2>Şifrenizi sıfırlamak için lütfen aşağıdaki bağlantıya tıklayınız.</h2><hr/>"
+                + $"<a href='{confirmLink}'>- Şifre sıfırlama bağlantısı</a><br/>"
+                + "<p>Bu bağlantıyı başkalarıyla paylaşmayınız!</p>";
+
+            EmailHelper.SendEmail(confirmationDto);
+
+            return new SuccessResult();
+        }
+
+        public IResult ResetPasswordForForgetten(User user, string token, string password)
+        {
+            IDataResult<UserToken> userTokenResult = _userTokenSevice.GetPasswordResetTokenByUserId(user.Id);
+            if (!userTokenResult.Success || userTokenResult.Data == null)
+            {
+                return new ErrorResult(SecurityMessages.SystemError);
+            }
+
+            if (userTokenResult.Data.Value != token)
+            {
+                return new ErrorResult(SecurityMessages.InvalidTransaction);
+            }
+
+            if (userTokenResult.Data.Expiration < DateTime.Now)
+            {
+                return new ErrorResult(SecurityMessages.TokenHasExpiredForPasswordReset);
+            }
+
+            byte[] passwordHash, passwordSalt;
+            HashingHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
+
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+
+            using (TransactionScope transaction = new TransactionScope())
+            {
+                _userDal.Update(user);
+                _userTokenSevice.Delete(userTokenResult.Data);
+
+                transaction.Complete();
+            }
+
+            return new SuccessResult(SecurityMessages.PasswordHasBeenReset);
         }
     }
 }
