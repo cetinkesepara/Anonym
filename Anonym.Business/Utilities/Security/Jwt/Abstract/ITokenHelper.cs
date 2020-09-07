@@ -11,6 +11,7 @@ namespace Anonym.Business.Utilities.Security.Jwt.Abstract
 {
     public interface ITokenHelper
     {
-        AccessToken CreateToken(User user, List<UserRoleClaimsJoin> roleClaims, List<UserClaim> userClaims);
+        AccessToken CreateTokenForLogin(User user, List<UserRoleClaimsJoin> roleClaims, List<UserClaim> userClaims, bool rememberMe);
+        AccessToken CreateTokenForUser(User user);
     }
 }

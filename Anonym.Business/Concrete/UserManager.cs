@@ -65,12 +65,18 @@ namespace Anonym.Business.Concrete
             return new SuccessDataResult<User>(user);
         }
 
-        public IDataResult<AccessToken> CreateAccessToken(User user)
+        public IDataResult<AccessToken> CreateAccessTokenForLogin(User user, bool rememberMe)
         {
             var roleClaims = _userDal.GetRoleClaims(user);
             var userClaims = _userDal.GetUserClaims(user);
-            var accessToken = _tokenHelper.CreateToken(user, roleClaims, userClaims);
+            var accessToken = _tokenHelper.CreateTokenForLogin(user, roleClaims, userClaims, rememberMe);
 
+            return new SuccessDataResult<AccessToken>(accessToken, SecurityMessages.LoginSuccessful);
+        }
+
+        public IDataResult<AccessToken> CreateAccessTokenForUser(User user)
+        {
+            var accessToken = _tokenHelper.CreateTokenForUser(user);
             return new SuccessDataResult<AccessToken>(accessToken, SecurityMessages.LoginSuccessful);
         }
 
@@ -137,7 +143,7 @@ namespace Anonym.Business.Concrete
                 return new ErrorResult(SecurityMessages.SystemError);
             }
 
-            IDataResult<AccessToken> tokenResult = CreateAccessToken(user);
+            IDataResult<AccessToken> tokenResult = CreateAccessTokenForUser(user);
             if (!tokenResult.Success || tokenResult.Data == null)
             {
                 return new ErrorResult(SecurityMessages.SystemError);
@@ -202,6 +208,7 @@ namespace Anonym.Business.Concrete
 
             if (userTokenResult.Data.Expiration < DateTime.Now)
             {
+                _userTokenSevice.Delete(userTokenResult.Data);
                 return new ErrorResult(SecurityMessages.TokenHasExpiredForEmailConfirm);
             }
 
@@ -251,7 +258,7 @@ namespace Anonym.Business.Concrete
                 return new ErrorResult(SecurityMessages.SystemError);
             }
 
-            IDataResult<AccessToken> tokenResult = CreateAccessToken(user);
+            IDataResult<AccessToken> tokenResult = CreateAccessTokenForUser(user);
             if (!tokenResult.Success || tokenResult.Data == null)
             {
                 return new ErrorResult(SecurityMessages.SystemError);
@@ -311,6 +318,7 @@ namespace Anonym.Business.Concrete
 
             if (userTokenResult.Data.Expiration < DateTime.Now)
             {
+                _userTokenSevice.Delete(userTokenResult.Data);
                 return new ErrorResult(SecurityMessages.TokenHasExpiredForPasswordReset);
             }
 

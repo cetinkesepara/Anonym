@@ -24,21 +24,23 @@ namespace Anonym.Business.Utilities.Security.Jwt.Concrete
             _tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
         }
 
-        public AccessToken CreateToken(User user, List<UserRoleClaimsJoin> roleClaims, List<UserClaim> userClaims)
+        public AccessToken CreateTokenForLogin(User user, List<UserRoleClaimsJoin> roleClaims, List<UserClaim> userClaims, bool rememberMe)
         {
-            _accessTokenExpiration = DateTime.Now.AddMinutes(_tokenOptions.AccessTokenExpiration);
+            _accessTokenExpiration = rememberMe
+                ? DateTime.Now.AddYears(5)
+                : DateTime.Now.AddMinutes(_tokenOptions.AccessTokenExpiration);
 
             var securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
             var signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
 
-            var jwtSecurityToken = CreateJwtSecurityToken(_tokenOptions, user, signingCredentials, roleClaims, userClaims);
+            var jwtSecurityToken = CreateJwtSecurityTokenForLogin(_tokenOptions, user, signingCredentials, roleClaims, userClaims);
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             var token = jwtSecurityTokenHandler.WriteToken(jwtSecurityToken);
 
             return new AccessToken { Token = token, Expiration = _accessTokenExpiration };
         }
 
-        public JwtSecurityToken CreateJwtSecurityToken(TokenOptions tokenOptions, User user, SigningCredentials signingCredentials, List<UserRoleClaimsJoin> roleClaims, List<UserClaim> userClaims)
+        public JwtSecurityToken CreateJwtSecurityTokenForLogin(TokenOptions tokenOptions, User user, SigningCredentials signingCredentials, List<UserRoleClaimsJoin> roleClaims, List<UserClaim> userClaims)
         {
             var jwt = new JwtSecurityToken(
                     issuer: tokenOptions.Issuer,
@@ -46,13 +48,13 @@ namespace Anonym.Business.Utilities.Security.Jwt.Concrete
                     expires: _accessTokenExpiration,
                     notBefore: DateTime.Now,
                     signingCredentials: signingCredentials,
-                    claims: SetClaims(user, roleClaims, userClaims)
+                    claims: SetClaimsForLogin(user, roleClaims, userClaims)
                 );
 
             return jwt;
         }
 
-        private IEnumerable<Claim> SetClaims(User user, List<UserRoleClaimsJoin> roleClaims, List<UserClaim> userClaims)
+        private IEnumerable<Claim> SetClaimsForLogin(User user, List<UserRoleClaimsJoin> roleClaims, List<UserClaim> userClaims)
         {
             var claims = new List<Claim>();
 
@@ -73,6 +75,43 @@ namespace Anonym.Business.Utilities.Security.Jwt.Concrete
             return claims;
         }
 
+        public AccessToken CreateTokenForUser(User user)
+        {
+            _accessTokenExpiration = DateTime.Now.AddMinutes(_tokenOptions.AccessTokenExpiration);
 
+            var securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
+            var signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
+
+            var jwtSecurityToken = CreateJwtSecurityTokenForUser(_tokenOptions, user, signingCredentials);
+            var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
+            var token = jwtSecurityTokenHandler.WriteToken(jwtSecurityToken);
+
+            return new AccessToken { Token = token, Expiration = _accessTokenExpiration };
+        }
+
+        private JwtSecurityToken CreateJwtSecurityTokenForUser(TokenOptions tokenOptions, User user, SigningCredentials signingCredentials)
+        {
+            var jwt = new JwtSecurityToken(
+                issuer: tokenOptions.Issuer,
+                audience: tokenOptions.Audience,
+                expires: _accessTokenExpiration,
+                notBefore: DateTime.Now,
+                signingCredentials: signingCredentials,
+                claims: SetClaimsForUser(user)
+            );
+
+            return jwt;
+        }
+
+        private IEnumerable<Claim> SetClaimsForUser(User user)
+        {
+            var claims = new List<Claim>();
+
+            claims.Add(new Claim(ClaimTypes.Email, user.Email));
+            claims.Add(new Claim(ClaimTypes.Name, user.Name));
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
+
+            return claims;
+        }
     }
 }

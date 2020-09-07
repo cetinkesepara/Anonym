@@ -54,7 +54,7 @@ namespace Anonym.WebAPI.Controllers
                 });
             }
 
-            IDataResult<AccessToken> createTokenResult = _userService.CreateAccessToken(loginResult.Data);
+            IDataResult<AccessToken> createTokenResult = _userService.CreateAccessTokenForLogin(loginResult.Data, userForLoginDto.RememberMe);
             if (!createTokenResult.Success)
             {
                 return BadRequest(new ErrorResultDto { 

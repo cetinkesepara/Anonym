@@ -10,7 +10,8 @@ namespace Anonym.Business.Abstract
 {
     public interface IUserService
     {
-        IDataResult<AccessToken> CreateAccessToken(User user);
+        IDataResult<AccessToken> CreateAccessTokenForLogin(User user, bool rememberMe);
+        IDataResult<AccessToken> CreateAccessTokenForUser(User user);
         IDataResult<User> Login(UserForLoginDto userForLoginDto);
         IDataResult<User> GetById(string userId);
         IResult Register(User user, string password);
