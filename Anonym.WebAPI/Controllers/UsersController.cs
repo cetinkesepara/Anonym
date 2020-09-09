@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using Anonym.Business.Abstract;
 using Anonym.Business.Constants.Errors;
 using Anonym.Business.Constants.Messages;
@@ -12,6 +13,7 @@ using Anonym.Entities.Dtos;
 using AutoMapper;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,11 +26,13 @@ namespace Anonym.WebAPI.Controllers
     {
         private IMapper _mapper;
         private IUserService _userService;
+        private IUserLoginService _userLoginService;
 
-        public UsersController(IMapper mapper, IUserService userService)
+        public UsersController(IMapper mapper, IUserService userService, IUserLoginService userLoginService)
         {
             _mapper = mapper;
             _userService = userService;
+            _userLoginService = userLoginService;
         }
 
         [HttpPost("login")]
@@ -224,6 +228,73 @@ namespace Anonym.WebAPI.Controllers
             }
 
             return Ok(result.Message);
+        }
+
+        [HttpPost("loginWithSocial")]
+        public IActionResult loginWithSocial([FromBody] UserForSocialLoginDto userForSocial)
+        {
+            if(userForSocial == null)
+            {
+                return BadRequest();
+            }
+
+            User user = new User
+            {
+                Name = userForSocial.Name,
+                Email = userForSocial.Email,
+                UserName = userForSocial.Email,
+                NormalizedEmail = userForSocial.Email.ToUpper(new CultureInfo("en-Us")),
+                NormalizedUserName = userForSocial.Email.ToUpper(new CultureInfo("en-Us")),
+                EmailConfirmed = true
+            };
+
+            IDataResult<UserLogin> userLoginResult = _userLoginService.GetByProviderKey(userForSocial.Id, userForSocial.Provider);
+            if(userLoginResult.Success && userLoginResult.Data == null)
+            {
+                using (TransactionScope transaction = new TransactionScope())
+                {
+                    UserLogin userLogin = new UserLogin
+                    {
+                        LoginProvider = userForSocial.Provider,
+                        ProviderKey = userForSocial.Id,
+                        ProviderDisplayName = userForSocial.Provider
+                    };
+
+                    var userDb = _userService.GetByEmail(userForSocial.Email);
+                    if (userDb == null)
+                    {
+                        _userService.RegisterForSocialLogin(user);
+                        userLogin.UserId = user.Id;
+                    }
+                    else
+                    {
+                        userLogin.UserId = userDb.Id;
+                    }
+
+                   
+                    IResult userLoginAddResult = _userLoginService.Add(userLogin);
+                    if (!userLoginAddResult.Success)
+                    {
+                        return BadRequest();
+                    }
+
+                    transaction.Complete();
+                }
+            }
+
+
+            IDataResult<AccessToken> createTokenResult = _userService.CreateAccessTokenForLogin(user, true);
+            if (!createTokenResult.Success)
+            {
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.DefaultError,
+                    Type = ErrorTypes.Danger,
+                    Value = SecurityMessages.SystemError
+                });
+            }
+
+            return Ok(createTokenResult);
         }
     }
 }

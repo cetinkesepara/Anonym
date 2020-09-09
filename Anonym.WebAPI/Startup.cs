@@ -28,7 +28,7 @@ namespace Anonym.WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AnonymContext>(x => x.UseSqlServer(Configuration.GetConnectionString("SQLProvider"), y => y.MigrationsAssembly("Anonym.DataAccess")));
+            services.AddDbContext<AnonymContext>(x => x.UseSqlServer(Configuration.GetConnectionString("SQLProvider"), y => y.MigrationsAssembly("Anonym.DataAccess")), ServiceLifetime.Transient);
 
             services.AddAutoMapper(typeof(BusinessProfile));
 
@@ -38,8 +38,6 @@ namespace Anonym.WebAPI
             {
                 options.AddPolicy("AllowOrigin", builder => builder.WithOrigins(Configuration.GetSection("Origins:Anonym.WebUI.SPA").Value));
             });
-
-            //services.AddCors();
 
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

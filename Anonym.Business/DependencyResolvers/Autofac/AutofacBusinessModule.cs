@@ -15,36 +15,37 @@ namespace Anonym.Business.DependencyResolvers.Autofac
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<PostManager>().As<IPostService>().SingleInstance();
-            builder.RegisterType<EfPostDal>().As<IPostDal>().SingleInstance();
+            builder.RegisterType<PostManager>().As<IPostService>().InstancePerLifetimeScope();
+            builder.RegisterType<EfPostDal>().As<IPostDal>().InstancePerLifetimeScope();
 
-            builder.RegisterType<CategoryManager>().As<ICategoryService>().SingleInstance();
-            builder.RegisterType<EfCategoryDal>().As<ICategoryDal>().SingleInstance();
+            builder.RegisterType<CategoryManager>().As<ICategoryService>().InstancePerLifetimeScope();
+            builder.RegisterType<EfCategoryDal>().As<ICategoryDal>().InstancePerLifetimeScope();
 
-            builder.RegisterType<ChatRoomManager>().As<IChatRoomService>().SingleInstance();
-            builder.RegisterType<EfChatRoomDal>().As<IChatRoomDal>().SingleInstance();
+            builder.RegisterType<ChatRoomManager>().As<IChatRoomService>().InstancePerLifetimeScope();
+            builder.RegisterType<EfChatRoomDal>().As<IChatRoomDal>().InstancePerLifetimeScope();
 
-            builder.RegisterType<ChatMessageManager>().As<IChatMessageService>().SingleInstance();
-            builder.RegisterType<EfChatMessageDal>().As<IChatMessageDal>().SingleInstance();
+            builder.RegisterType<ChatMessageManager>().As<IChatMessageService>().InstancePerLifetimeScope();
+            builder.RegisterType<EfChatMessageDal>().As<IChatMessageDal>().InstancePerLifetimeScope();
 
-            builder.RegisterType<UserManager>().As<IUserService>().SingleInstance();
-            builder.RegisterType<EfUserDal>().As<IUserDal>().SingleInstance();
+            builder.RegisterType<UserManager>().As<IUserService>().InstancePerLifetimeScope();
+            builder.RegisterType<EfUserDal>().As<IUserDal>().InstancePerLifetimeScope();
 
-            builder.RegisterType<EfUserClaimDal>().As<IUserClaimDal>().SingleInstance();
+            builder.RegisterType<EfUserClaimDal>().As<IUserClaimDal>().InstancePerLifetimeScope();
 
-            builder.RegisterType<EfUserLoginDal>().As<IUserLoginDal>().SingleInstance();
+            builder.RegisterType<UserLoginManager>().As<IUserLoginService>().InstancePerLifetimeScope();
+            builder.RegisterType<EfUserLoginDal>().As<IUserLoginDal>().InstancePerLifetimeScope();
 
-            builder.RegisterType<EfRoleDal>().As<IRoleDal>().SingleInstance();
+            builder.RegisterType<EfRoleDal>().As<IRoleDal>().InstancePerLifetimeScope();
 
-            builder.RegisterType<EfRoleClaimDal>().As<IRoleClaimDal>().SingleInstance();
+            builder.RegisterType<EfRoleClaimDal>().As<IRoleClaimDal>().InstancePerLifetimeScope();
 
-            builder.RegisterType<EfUserRoleDal>().As<IUserRoleDal>().SingleInstance();
+            builder.RegisterType<EfUserRoleDal>().As<IUserRoleDal>().InstancePerLifetimeScope();
 
-            builder.RegisterType<SettingManager>().As<ISettingService>().SingleInstance();
-            builder.RegisterType<EfSettingDal>().As<ISettingDal>().SingleInstance();
+            builder.RegisterType<SettingManager>().As<ISettingService>().InstancePerLifetimeScope();
+            builder.RegisterType<EfSettingDal>().As<ISettingDal>().InstancePerLifetimeScope();
 
-            builder.RegisterType<UserTokenManager>().As<IUserTokenSevice>().SingleInstance();
-            builder.RegisterType<EfUserTokenDal>().As<IUserTokenDal>().SingleInstance();
+            builder.RegisterType<UserTokenManager>().As<IUserTokenSevice>().InstancePerLifetimeScope();
+            builder.RegisterType<EfUserTokenDal>().As<IUserTokenDal>().InstancePerLifetimeScope();
 
             builder.RegisterType<JwtHelper>().As<ITokenHelper>();
         }

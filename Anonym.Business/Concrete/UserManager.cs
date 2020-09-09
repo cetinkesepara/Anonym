@@ -101,6 +101,19 @@ namespace Anonym.Business.Concrete
             return new SuccessResult(registerSuccessMessage);
         }
 
+        public IResult RegisterForSocialLogin(User user)
+        {
+            byte[] passwordHash, passwordSalt;
+            HashingHelper.CreatePasswordHash(Guid.NewGuid().ToString(), out passwordHash, out passwordSalt);
+
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+
+            _userDal.Add(user);
+
+            return new SuccessResult();
+        }
+
         public IResult UserExists(string email)
         {
             if (GetByEmail(email) != null)

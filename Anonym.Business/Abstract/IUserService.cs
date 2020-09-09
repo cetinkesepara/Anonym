@@ -15,6 +15,7 @@ namespace Anonym.Business.Abstract
         IDataResult<User> Login(UserForLoginDto userForLoginDto);
         IDataResult<User> GetById(string userId);
         IResult Register(User user, string password);
+        IResult RegisterForSocialLogin(User user);
         IResult UserExists(string email);
         IResult ConfirmationEmail(User user);
         IResult ActivateEmail(User user, string token);
