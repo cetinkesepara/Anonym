@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Transactions;
 using Anonym.Business.Abstract;
@@ -14,6 +16,7 @@ using AutoMapper;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -231,7 +234,7 @@ namespace Anonym.WebAPI.Controllers
         }
 
         [HttpPost("loginWithSocial")]
-        public IActionResult loginWithSocial([FromBody] UserForSocialLoginDto userForSocial)
+        public IActionResult LoginWithSocial([FromBody] UserForSocialLoginDto userForSocial)
         {
             if(userForSocial == null)
             {
@@ -295,6 +298,167 @@ namespace Anonym.WebAPI.Controllers
             }
 
             return Ok(createTokenResult);
+        }
+
+        [HttpGet("getAccountUser")]
+        [Authorize()]
+        public IActionResult GetAccountUser()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            string email = identity.FindFirst(ClaimTypes.Email).Value;
+
+            IDataResult<AccountUserDto> accountUserResult = _userService.GetAccountUserInfo(email);
+            if(!accountUserResult.Success || accountUserResult.Data == null)
+            {
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.DefaultError,
+                    Type = ErrorTypes.Danger,
+                    Value = SecurityMessages.SystemError
+                });
+            }
+
+            return Ok(accountUserResult.Data);
+        }
+
+        [HttpPost("updateUserInformation")]
+        [Authorize()]
+        public IActionResult UpdateUserInfo([FromBody] UserInformationDto userInformationDto)
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            string email = identity.FindFirst(ClaimTypes.Email).Value;
+
+            User user = _userService.GetByEmail(email);
+            if(user == null)
+            {
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.DefaultError,
+                    Type = ErrorTypes.Danger,
+                    Value = SecurityMessages.SystemError
+                });
+            }
+
+            if(userInformationDto.Name != null)
+            {
+                user.Name = userInformationDto.Name;
+            }
+
+            if (userInformationDto.City != null)
+            {
+                user.City = userInformationDto.City;
+            }
+
+            if (userInformationDto.Gender != null)
+            {
+                user.Gender = userInformationDto.Gender;
+            }
+
+            if (userInformationDto.BirthDay != null)
+            {
+                user.BirthDay = userInformationDto.BirthDay;
+            }
+
+            IResult updateResult = _userService.Update(user);
+            if (!updateResult.Success)
+            {
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.DefaultError,
+                    Type = ErrorTypes.Danger,
+                    Value = SecurityMessages.SystemError
+                });
+            }
+
+            return Ok(updateResult.Message);
+        }
+
+        [HttpPost("updateUsername")]
+        [Authorize()]
+        public IActionResult UpdateUsername([FromBody] UsernameDto usernameDto)
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            string email = identity.FindFirst(ClaimTypes.Email).Value;
+
+            User user = _userService.GetByEmail(email);
+            if (user == null)
+            {
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.DefaultError,
+                    Type = ErrorTypes.Danger,
+                    Value = SecurityMessages.SystemError
+                });
+            }
+
+            if(!Regex.IsMatch(usernameDto.UserName, "^[a-zA-Z0-9]*$"))
+            {
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.DefaultError,
+                    Type = ErrorTypes.Danger,
+                    Value = SecurityMessages.SystemError
+                });
+            }
+
+            IResult usernameExistResult = _userService.UsernameExists(usernameDto.UserName);
+            if (!usernameExistResult.Success)
+            {
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.UsernameExistError,
+                    Type = ErrorTypes.Warning,
+                    Value = usernameExistResult.Message
+                });
+            }
+
+            user.UserName = usernameDto.UserName;
+            user.NormalizedUserName = usernameDto.UserName.ToUpper(new CultureInfo("en-Us"));
+
+            IResult updateResult = _userService.Update(user);
+            if (!updateResult.Success)
+            {
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.DefaultError,
+                    Type = ErrorTypes.Danger,
+                    Value = SecurityMessages.SystemError
+                });
+            }
+
+            return Ok(updateResult.Message);
+        }
+
+        [HttpPost("updatePassword")]
+        [Authorize()]
+        public IActionResult UpdatePassword([FromBody] PasswordDto passwordDto)
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            string email = identity.FindFirst(ClaimTypes.Email).Value;
+
+            User user = _userService.GetByEmail(email);
+            if (user == null)
+            {
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.DefaultError,
+                    Type = ErrorTypes.Danger,
+                    Value = SecurityMessages.SystemError
+                });
+            }
+
+            IResult updateResult = _userService.UpdatePassword(user, passwordDto.Password);
+            if (!updateResult.Success)
+            {
+                return BadRequest(new ErrorResultDto
+                {
+                    Name = ErrorNames.DefaultError,
+                    Type = ErrorTypes.Danger,
+                    Value = SecurityMessages.SystemError
+                });
+            }
+
+            return Ok(updateResult.Message);
         }
     }
 }

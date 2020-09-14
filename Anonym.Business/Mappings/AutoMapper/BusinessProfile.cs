@@ -14,6 +14,7 @@ namespace Anonym.Business.Mappings.AutoMapper
             CreateMap<CategoryForAddDto, Category>();
             CreateMap<UserForRegisterDto, User>();
             CreateMap<OptionForSendEmailDto, EmailSendDto>();
+            CreateMap<User, AccountUserDto>();
         }
     }
 }

@@ -16,7 +16,10 @@ namespace Anonym.Business.Constants.Messages
 
         public static string UserAdded = "Üye kaydı oluşturuldu.";
         public static string UserExistsForEmail = "Bu email adresi ile daha önce zaten kaydolunmuş.";
+        public static string UserExistsForUsername = "Bu kullanıcı adı kullanılıyor.";
         public static string UserNotFoundForEmail = "Bu email adresine ait bir kullanıcı bulunamadı.";
+        public static string UserUpdated = "Kullanıcı bilgisi güncellendi.";
+        public static string UserPasswordUpdated = "Kullanıcı şifresi güncellendi.";
 
         public static string SettingAdded = "Yeni bir ayar başarıyla eklendi.";
         public static string SettingDeleted = "Ayar verisi başarıyla silindi.";

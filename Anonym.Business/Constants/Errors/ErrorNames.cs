@@ -15,6 +15,7 @@ namespace Anonym.Business.Constants.Errors
         public static string ActivatedErrorEmail = "ActivatedErrorEmail";
         public static string ForgettingPasswordError = "ForgettingPasswordError";
         public static string ResetPasswordError = "ResetPasswordError";
+        public static string UsernameExistError = "UsernameExistError";
 
 
         public static string DefaultError = "DefaultError";

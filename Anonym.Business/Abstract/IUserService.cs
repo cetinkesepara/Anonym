@@ -10,6 +10,7 @@ namespace Anonym.Business.Abstract
 {
     public interface IUserService
     {
+        IDataResult<AccountUserDto> GetAccountUserInfo(string email);
         IDataResult<AccessToken> CreateAccessTokenForLogin(User user, bool rememberMe);
         IDataResult<AccessToken> CreateAccessTokenForUser(User user);
         IDataResult<User> Login(UserForLoginDto userForLoginDto);
@@ -22,6 +23,9 @@ namespace Anonym.Business.Abstract
         IResult IsConfirmEmail(string email);
         IResult ForgettingPassword(User user);
         IResult ResetPasswordForForgetten(User user, string token, string password);
+        IResult Update(User user);
+        IResult UsernameExists(string username);
+        IResult UpdatePassword(User user, string password);
         User GetByUsername(string username);
         User GetByEmail(string email);
     }

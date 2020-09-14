@@ -351,5 +351,41 @@ namespace Anonym.Business.Concrete
 
             return new SuccessResult(SecurityMessages.PasswordHasBeenReset);
         }
+
+        public IDataResult<AccountUserDto> GetAccountUserInfo(string email)
+        {
+            User user = GetByEmail(email);
+            AccountUserDto accountUserDto = _mapper.Map<AccountUserDto>(user);
+            return new SuccessDataResult<AccountUserDto>(accountUserDto);
+        }
+
+        public IResult Update(User user)
+        {
+            _userDal.Update(user);
+            return new SuccessResult(CrudMessages.UserUpdated);
+        }
+
+        public IResult UsernameExists(string username)
+        {
+            var user = GetByUsername(username);
+            if(user != null)
+            {
+                return new ErrorResult(CrudMessages.UserExistsForUsername);
+            }
+            return new SuccessResult();
+        }
+
+        public IResult UpdatePassword(User user, string password)
+        {
+            byte[] passwordHash, passwordSalt;
+            HashingHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
+
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+
+            Update(user);
+
+            return new SuccessResult(CrudMessages.UserPasswordUpdated);
+        }
     }
 }
